@@ -11,6 +11,7 @@
         <th>Title</th>
         <th>Publisher</th>
         <th>Authors</th>
+        <th>Details</th>
     </tr>
     </thead>
     <tbody>
@@ -22,6 +23,7 @@
                 <li th:each="auth : ${book.authors}" th:text="${auth.fullName}"></li>
             </ul>
         </td>
+        <td><a th:href="@{'/books/' + ${book.id}}">Show details</a></td>
     </tr>
     </tbody>
 </table>

@@ -26,15 +26,15 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     @Transactional
     public Book createBook(String title, String publisherName) {
-        Publisher publisher = new Publisher(publisherName);
-        publisher = publisherRepository.save(publisher);
+        Publisher publisher = publisherRepository.findByName(publisherName).orElseGet(() -> {
+            Publisher newPublisher = new Publisher(publisherName);
+            return publisherRepository.save(newPublisher);
+        });
 
         Book book = new Book(title);
         book.setPublisher(publisher);
 
-        book = bookRepository.save(book);
-
-        return book;
+        return bookRepository.save(book);
     }
 
     @Override
@@ -54,12 +54,19 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     @Transactional
     public void addAuthorToBook(Long bookId, String authorName) {
-        Book book = bookRepository.findById(bookId).orElseThrow();
-        Author author = new Author(authorName);
-        author = authorRepository.save(author);
+        Book book = bookRepository.findById(bookId)
+                                  .orElseThrow(() -> new RuntimeException(
+                                          "Book not found with ID: " + bookId));
 
-        book.getAuthors().add(author);
-        bookRepository.save(book);
+        Author author = authorRepository.findByFullName(authorName).orElseGet(() -> {
+            Author newAuthor = new Author(authorName);
+            return authorRepository.save(newAuthor);
+        });
+
+        if (!book.getAuthors().contains(author)) {
+            book.getAuthors().add(author);
+            bookRepository.save(book);
+        }
     }
 
 }
