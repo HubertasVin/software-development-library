@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Books</title>
+</head>
+<body>
+<h1>All Books</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Publisher</th>
+        <th>Authors</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.title}"></td>
+        <td th:text="${book.publisher.name}"></td>
+        <td>
+            <ul>
+                <li th:each="auth : ${book.authors}" th:text="${auth.fullName}"></li>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<a href="/books/new">Add New Book</a>
+
+</body>
+</html>
