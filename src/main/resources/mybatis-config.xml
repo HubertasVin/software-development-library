@@ -6,8 +6,4 @@
     <typeAliases>
         <package name="com.hubertasvin.library.domain"/>
     </typeAliases>
-
-    <mappers>
-        <mapper resource="com/hubertasvin/library/mapper/BookMapper.xml"/>
-    </mappers>
 </configuration>

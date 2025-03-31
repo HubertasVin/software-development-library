@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan(basePackages = "com.hubertasvin.library.mapper")
+@MapperScan(basePackages = "mapper")
 public class MyBatisConfig {
 
     @Bean

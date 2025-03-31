@@ -3,6 +3,7 @@ package com.hubertasvin.library.service;
 import com.hubertasvin.library.domain.Author;
 import com.hubertasvin.library.domain.Book;
 import com.hubertasvin.library.domain.Publisher;
+import com.hubertasvin.library.mapper.AuthorMapper;
 import com.hubertasvin.library.mapper.BookMapper;
 import com.hubertasvin.library.repository.AuthorRepository;
 import com.hubertasvin.library.repository.BookRepository;
@@ -15,13 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class LibraryServiceImpl implements LibraryService {
 
     @Autowired
-    private BookRepository bookRepository;      // JPA
+    private BookRepository bookRepository;
     @Autowired
-    private AuthorRepository authorRepository;  // JPA
+    private AuthorRepository authorRepository;
     @Autowired
-    private PublisherRepository publisherRepository; // JPA
+    private PublisherRepository publisherRepository;
     @Autowired
-    private BookMapper bookMapper; // MyBatis
+    private AuthorMapper authorMapper;
+    @Autowired
+    private BookMapper bookMapper;
 
     @Override
     @Transactional
@@ -51,22 +54,43 @@ public class LibraryServiceImpl implements LibraryService {
         return book;
     }
 
+//    @Override
+//    @Transactional
+//    public void addAuthorToBook(Long bookId, String authorName) {
+//        Book book = bookRepository.findById(bookId)
+//                                  .orElseThrow(() -> new RuntimeException(
+//                                          "Book not found with ID: " + bookId));
+//
+//        Author author = authorRepository.findByFullName(authorName).orElseGet(() -> {
+//            Author newAuthor = new Author(authorName);
+//            return authorRepository.save(newAuthor);
+//        });
+//
+//        if (!book.getAuthors().contains(author)) {
+//            book.getAuthors().add(author);
+//            bookRepository.save(book);
+//        }
+//    }
+
+//    @Override
+//    @Transactional
+//    public void addAuthorToBook(Long bookId, String authorName) {
+//        Author author = authorMapper.findByFullName(authorName);
+//        if (author == null) {
+//            author = new Author(authorName);
+//            authorMapper.insert(author);
+//        }
+//        bookMapper.insertBookAuthor(bookId, author.getId());
+//    }
+
     @Override
     @Transactional
     public void addAuthorToBook(Long bookId, String authorName) {
-        Book book = bookRepository.findById(bookId)
-                                  .orElseThrow(() -> new RuntimeException(
-                                          "Book not found with ID: " + bookId));
-
-        Author author = authorRepository.findByFullName(authorName).orElseGet(() -> {
-            Author newAuthor = new Author(authorName);
-            return authorRepository.save(newAuthor);
-        });
-
-        if (!book.getAuthors().contains(author)) {
-            book.getAuthors().add(author);
-            bookRepository.save(book);
+        Author author = authorMapper.findByFullName(authorName);
+        if (author == null) {
+            author = new Author(authorName);
+            authorMapper.insert(author);
         }
+        bookMapper.insertBookAuthor(bookId, author.getId());
     }
-
 }
