@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hubertasvin.library.mapper.BookMapper">
+
+    <!-- Map the SQL result to a BookDTO -->
+    <resultMap id="bookDTOResultMap" type="com.hubertasvin.library.dto.BookDTO">
+        <!-- Map Book fields -->
+        <id property="id" column="book_id"/>
+        <result property="title" column="title"/>
+
+        <!-- Map the PublisherDTO -->
+        <association property="publisher" javaType="com.hubertasvin.library.dto.PublisherDTO">
+            <id property="id" column="publisher_id"/>
+            <result property="name" column="publisher_name"/>
+        </association>
+
+        <!-- Map the Authors collection -->
+        <collection property="authors" ofType="com.hubertasvin.library.dto.AuthorDTO" javaType="java.util.ArrayList">
+            <id property="id" column="author_id"/>
+            <result property="fullName" column="author_full_name"/>
+        </collection>
+    </resultMap>
+
+    <!-- Single select statement that joins all needed tables -->
+    <select id="selectAllBooksWithDetails" resultMap="bookDTOResultMap">
+        SELECT
+            b.id AS book_id,
+            b.title AS title,
+            p.id AS publisher_id,
+            p.publisher_name AS publisher_name,
+            a.id AS author_id,
+            a.full_name AS author_full_name
+        FROM books b
+                 LEFT JOIN publishers p ON b.publisher_id = p.id
+                 LEFT JOIN book_authors ba ON b.id = ba.book_id
+                 LEFT JOIN authors a ON ba.author_id = a.id
+    </select>
+
+</mapper>
