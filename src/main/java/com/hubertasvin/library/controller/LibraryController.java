@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
+import java.util.List;
+
 @Controller
 @RequestScope
 public class LibraryController {
@@ -25,10 +27,16 @@ public class LibraryController {
     @Autowired
     private AuthorRepository authorRepository;
 
+//    @GetMapping("/books")
+//    public String listBooks(Model model) {
+//        model.addAttribute("books", bookRepository.findAll());
+//        return "books";
+//    }
     @GetMapping("/books")
     public String listBooks(Model model) {
-        model.addAttribute("books", bookRepository.findAll());
-        return "books";
+        List<Book> books = libraryService.getAllBooksDetails();
+        model.addAttribute("books", books);
+        return "books";  // renders books.html
     }
 
     @GetMapping("/authors")

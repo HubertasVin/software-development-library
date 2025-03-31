@@ -1,5 +1,6 @@
 package com.hubertasvin.library.service;
 
+import com.hubertasvin.library.bean.GlobalLibraryStats;
 import com.hubertasvin.library.domain.Author;
 import com.hubertasvin.library.domain.Book;
 import com.hubertasvin.library.domain.Publisher;
@@ -11,6 +12,8 @@ import com.hubertasvin.library.repository.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class LibraryServiceImpl implements LibraryService {
@@ -26,6 +29,9 @@ public class LibraryServiceImpl implements LibraryService {
     @Autowired
     private BookMapper bookMapper;
 
+    @Autowired
+    private GlobalLibraryStats globalLibraryStats;
+
     @Override
     @Transactional
     public Book createBook(String title, String publisherName) {
@@ -37,6 +43,7 @@ public class LibraryServiceImpl implements LibraryService {
         Book book = new Book(title);
         book.setPublisher(publisher);
 
+        globalLibraryStats.incrementBooks();
         return bookRepository.save(book);
     }
 
@@ -90,7 +97,14 @@ public class LibraryServiceImpl implements LibraryService {
         if (author == null) {
             author = new Author(authorName);
             authorMapper.insert(author);
+            globalLibraryStats.incrementAuthors();
         }
         bookMapper.insertBookAuthor(bookId, author.getId());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Book> getAllBooksDetails() {
+        return bookMapper.selectAllBooksWithDetails();
     }
 }
