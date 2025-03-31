@@ -9,33 +9,35 @@ import java.util.List;
 
 public interface BookMapper {
 
-    @Select("SELECT b.id, b.title FROM books b")
-    @Results(
-            id = "bookResultMap",
-            value = {@Result(
-                    column = "id",
-                    property = "id",
-                    id = true
-            ), @Result(
-                    column = "title",
-                    property = "title"
-            ), @Result(
-                    property = "publisher",
-                    column = "id",
-                    one = @One(
-                            select = "com.hubertasvin.library.mapper.BookMapper" +
-                                    ".selectPublisherByBookId"
-                    )
-            ), @Result(
-                    property = "authors",
-                    column = "id",
-                    many = @Many(
-                            select = "com.hubertasvin.library.mapper.BookMapper" +
-                                    ".selectAuthorsByBookId"
-                    )
-            )}
+    @Select(
+            "SELECT b.id AS book_id, b.title AS title, p.id AS publisher_id, p.publisher_name AS publisher_name, " +
+                    "a.id AS author_id, a.full_name AS author_full_name FROM books b " +
+                    "LEFT JOIN publishers p ON b.publisher_id = p.id " +
+                    "LEFT JOIN book_authors ba ON b.id = ba.book_id " +
+                    "LEFT JOIN authors a ON ba.author_id = a.id"
     )
+    @Results({
+            @Result(column = "book_id", property = "id", id = true),
+            @Result(column = "title", property = "title"),
+            @Result(property = "publisher",
+                    association = @Association(
+                            results = {
+                                    @Result(column = "publisher_id", property = "id", id = true),
+                                    @Result(column = "publisher_name", property = "name")
+                            }
+                    )
+            ),
+            @Result(property = "authors",
+                    collection = @Collection(
+                            results = {
+                                    @Result(column = "author_id", property = "id", id = true),
+                                    @Result(column = "author_full_name", property = "fullName")
+                            }
+                    )
+            )
+    })
     List<Book> selectAllBooksWithDetails();
+
 
     @Insert("INSERT INTO books(title, publisher_id) VALUES (#{title}, #{publisher.id})")
     @Options(
@@ -46,19 +48,4 @@ public interface BookMapper {
 
     @Insert("INSERT INTO book_authors(book_id, author_id) VALUES (#{bookId}, #{authorId})")
     void insertBookAuthor(@Param("bookId") Long bookId, @Param("authorId") Long authorId);
-
-    @Select(
-            "SELECT p.id, p.publisher_name AS name FROM publishers p " + "JOIN books b ON b" +
-                    ".publisher_id = p.id WHERE b.id = #{bookId}"
-    )
-    Publisher selectPublisherByBookId(@Param("bookId") Long bookId);
-
-    @Select(
-            "SELECT a.id, a.full_name AS fullName FROM authors a " + "JOIN book_authors ba ON a" +
-                    ".id = ba.author_id WHERE ba.book_id = #{bookId}"
-    )
-    List<Author> selectAuthorsByBookId(
-            @Param("bookId") Long bookId
-    );
-
 }
