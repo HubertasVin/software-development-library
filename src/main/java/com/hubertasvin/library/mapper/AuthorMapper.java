@@ -6,11 +6,15 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
 
+@Mapper
 public interface AuthorMapper {
     @Select("SELECT * FROM authors WHERE full_name = #{fullName}")
     Author findByFullName(String fullName);
 
     @Insert("INSERT INTO authors(full_name) VALUES (#{fullName})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
+    @Options(
+            useGeneratedKeys = true,
+            keyProperty = "id"
+    )
     void insert(Author author);
 }

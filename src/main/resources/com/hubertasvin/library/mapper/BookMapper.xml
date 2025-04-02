@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hubertasvin.library.mapper.BookMapper">
+
+    <resultMap id="BookMap" type="Book">
+        <id property="id" column="book_id"/>
+        <result property="title" column="title"/>
+
+        <association property="publisher" javaType="Publisher">
+            <id property="id" column="publisher_id"/>
+            <result property="name" column="publisher_name"/>
+        </association>
+
+        <collection property="authors" ofType="Author">
+            <id property="id" column="author_id"/>
+            <result property="fullName" column="author_full_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllBooksWithDetails" resultMap="BookMap">
+        SELECT b.id             AS book_id,
+               b.title          AS title,
+               p.id             AS publisher_id,
+               p.publisher_name AS publisher_name,
+               a.id             AS author_id,
+               a.full_name      AS author_full_name
+        FROM books b
+                 JOIN publishers p ON b.publisher_id = p.id
+                 LEFT JOIN book_authors ba ON b.id = ba.book_id
+                 LEFT JOIN authors a ON ba.author_id = a.id
+    </select>
+
+</mapper>

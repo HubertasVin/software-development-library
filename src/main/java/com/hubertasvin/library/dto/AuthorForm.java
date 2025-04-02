@@ -3,7 +3,6 @@ package com.hubertasvin.library.dto;
 public class AuthorForm {
     private String name;
 
-    // Getter and Setter
     public String getName() {
         return name;
     }

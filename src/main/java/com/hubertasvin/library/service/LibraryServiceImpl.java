@@ -61,35 +61,6 @@ public class LibraryServiceImpl implements LibraryService {
         return book;
     }
 
-//    @Override
-//    @Transactional
-//    public void addAuthorToBook(Long bookId, String authorName) {
-//        Book book = bookRepository.findById(bookId)
-//                                  .orElseThrow(() -> new RuntimeException(
-//                                          "Book not found with ID: " + bookId));
-//
-//        Author author = authorRepository.findByFullName(authorName).orElseGet(() -> {
-//            Author newAuthor = new Author(authorName);
-//            return authorRepository.save(newAuthor);
-//        });
-//
-//        if (!book.getAuthors().contains(author)) {
-//            book.getAuthors().add(author);
-//            bookRepository.save(book);
-//        }
-//    }
-
-//    @Override
-//    @Transactional
-//    public void addAuthorToBook(Long bookId, String authorName) {
-//        Author author = authorMapper.findByFullName(authorName);
-//        if (author == null) {
-//            author = new Author(authorName);
-//            authorMapper.insert(author);
-//        }
-//        bookMapper.insertBookAuthor(bookId, author.getId());
-//    }
-
     @Override
     @Transactional
     public void addAuthorToBook(Long bookId, String authorName) {

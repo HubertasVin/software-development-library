@@ -4,12 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases>
-        <typeAlias alias="Integer" type="java.lang.Integer" />
-        <typeAlias alias="Long" type="java.lang.Long" />
-        <typeAlias alias="HashMap" type="java.util.HashMap" />
-        <typeAlias alias="LinkedHashMap" type="java.util.LinkedHashMap" />
-        <typeAlias alias="ArrayList" type="java.util.ArrayList" />
-        <typeAlias alias="LinkedList" type="java.util.LinkedList" />
-        <typeAlias type="com.example.demo.model.Students" alias="Students" />
+        <typeAlias alias="Book" type="com.hubertasvin.library.domain.Book" />
+        <typeAlias alias="Book" type="com.hubertasvin.library.domain.Publisher" />
+        <typeAlias alias="Book" type="com.hubertasvin.library.domain.Author" />
     </typeAliases>
+
+    <mappers>
+        <mapper resource="com/hubertasvin/library/mapper/BookMapper.xml" />
+    </mappers>
 </configuration>
