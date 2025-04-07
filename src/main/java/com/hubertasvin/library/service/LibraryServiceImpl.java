@@ -9,6 +9,9 @@ import com.hubertasvin.library.mapper.BookMapper;
 import com.hubertasvin.library.repository.AuthorRepository;
 import com.hubertasvin.library.repository.BookRepository;
 import com.hubertasvin.library.repository.PublisherRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,8 @@ public class LibraryServiceImpl implements LibraryService {
     private AuthorMapper authorMapper;
     @Autowired
     private BookMapper bookMapper;
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     private GlobalLibraryStats globalLibraryStats;
@@ -77,5 +82,28 @@ public class LibraryServiceImpl implements LibraryService {
     @Transactional(readOnly = true)
     public List<Book> getAllBooksDetails() {
         return bookMapper.selectAllBooksWithDetails();
+    }
+
+    @Transactional
+    public void simulateOptimisticLocking(Long bookId, String newTitle) {
+        Book book = em.find(Book.class, bookId);
+
+        em.detach(book);
+
+        em.createNativeQuery("UPDATE books SET version = version + 1 WHERE id = ?")
+          .setParameter(1, bookId)
+          .executeUpdate();
+
+        book.setTitle(newTitle);
+
+        em.merge(book);
+
+        try {
+            em.flush();
+        } catch (OptimisticLockException e) {
+            System.out.println("OptimisticLockException pagautas.");
+            em.clear();
+//            throw e;
+        }
     }
 }

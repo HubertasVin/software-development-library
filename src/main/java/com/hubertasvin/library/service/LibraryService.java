@@ -13,4 +13,6 @@ public interface LibraryService {
     void addAuthorToBook(Long bookId, String authorName);
 
     List<Book> getAllBooksDetails();
+
+    void simulateOptimisticLocking(Long bookId, String newTitle);
 }

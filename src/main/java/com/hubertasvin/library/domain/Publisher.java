@@ -2,6 +2,7 @@ package com.hubertasvin.library.domain;
 
 //import jakarta.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class Publisher {
     private String name;
 
     @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Book> books;
 
     public Publisher() {
